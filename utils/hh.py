@@ -52,7 +52,6 @@ class HHParser:
         response = requests.get(url=url, params=params)
         if response.status_code == 200:
             vacancies = response.json()["items"]
-        print(len(vacancies))
         return vacancies
 
     def get_all_vacancies(self, employers_list: list):
@@ -67,8 +66,7 @@ class HHParser:
         """ TEXT """
         filter_vacancies_list = []
         for vacancy in vacancies_list:
-            tmp_date = datetime.strptime(vacancy["published_at"], "%Y-%m-%dT%H:%M:%S%z")
-            published_date = tmp_date.strftime("%d.%m.%Y %H:%M:%S")
+            published_date = datetime.strptime(vacancy["published_at"], "%Y-%m-%dT%H:%M:%S%z")
             if vacancy["salary"] is not None:
                 salary = vacancy["salary"]
                 salary_from = salary["from"] if salary["from"] is not None else 0

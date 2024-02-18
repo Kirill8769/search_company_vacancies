@@ -1,13 +1,3 @@
-EMPLOYERS_LIST = [
-    {"id": "78638", "name": "Тинькофф"},
-    {"id": "15478", "name": "VK"},
-    {"id": "9498112", "name": "Яндекс Крауд"},
-    {"id": "1740", "name": "Яндекс"},
-    {"id": "3529", "name": "СБЕР"},
-    {"id": "733", "name": "ЛАНИТ"},
-    {"id": "1579449", "name": "idaproject"},
-    {"id": "9607951", "name": "Zonesmart LLC"},
-    {"id": "5390761", "name": "Совкомбанк Технологии"},
-    {"id": "4670572", "name": "Rubytech"},
-    {"id": "80", "name": "Альфа-Банк"},
-]
+import os
+
+PATH_PROJECT = os.path.dirname(os.path.abspath(__file__))
