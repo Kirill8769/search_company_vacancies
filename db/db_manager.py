@@ -43,20 +43,23 @@ class DBManager:
             values_len = "%s, " * len(data[0].keys())
             file_column = ", ".join(data[0].keys())
             insert_data = (tuple(item.values()) for item in data)
-            print(insert_data)
-            print(values_len[:-2])
             cur.executemany(f"""
                 INSERT INTO {name_table} ({file_column})
                 VALUES ({values_len[:-2]})
                 ON CONFLICT ({file_column.split(",")[0]}) DO NOTHING
             """, insert_data)
 
-    def get_companies_and_vacancies_count(self):
+    def get_companies_and_vacancies_count(self) -> list:
         """
         Метод получает список всех компаний и количество вакансий у каждой компании.
 
         :return:
         """
+        conn = self.connect_db()
+        with conn.cursor() as cur:
+            cur.execute("SELECT name, open_vacancies FROM employers ORDER BY 2 DESC")
+            result = cur.fetchall()
+        return result
 
     def get_all_vacancies(self):
         """
@@ -64,6 +67,20 @@ class DBManager:
 
         :return:
         """
+        conn = self.connect_db()
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT
+                    e.name,
+                    v.name,
+                    CONCAT(salary_from, ' ', '-', ' ', salary_to, ' ', currency) as salary,
+                    v.url
+                FROM employers e
+                    JOIN vacancies v USING(employer_id)
+                ORDER BY 1, 2
+            """)
+            result = cur.fetchall()
+        return result
 
     def get_avg_salary(self):
         """
@@ -71,6 +88,14 @@ class DBManager:
 
         :return:
         """
+        conn = self.connect_db()
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT ROUND(AVG((salary_from + salary_to) / 2), 2) as avg_salary
+                FROM vacancies  
+            """)
+            result = cur.fetchone()[0]
+        return result
 
     def get_vacancies_with_higher_salary(self):
         """
@@ -78,10 +103,28 @@ class DBManager:
 
         :return:
         """
+        avg_salary = self.get_avg_salary()
+        conn = self.connect_db()
+        with conn.cursor() as cur:
+            cur.execute(f"""
+                SELECT * FROM vacancies
+                WHERE ((salary_from + salary_to) / 2) > {avg_salary}
+            """)
+            result = cur.fetchall()
+        return result
 
-    def get_vacancies_with_keyword(self):
+    def get_vacancies_with_keyword(self, search_words: str):
         """
         Метод получает список всех вакансий, в названии которых содержатся переданные в метод слова, например python.
 
         :return:
         """
+        conn = self.connect_db()
+        with conn.cursor() as cur:
+            cur.execute(f"""
+                SELECT * FROM vacancies
+                WHERE name LIKE '%{search_words}%'
+                OR name LIKE '%{search_words.capitalize()}%'
+            """)
+            result = cur.fetchall()
+        return result
