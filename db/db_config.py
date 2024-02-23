@@ -5,7 +5,7 @@ from configparser import ConfigParser
 from config import PATH_PROJECT
 
 
-def config(filename="database.ini", section="postgresql"):
+def config(filename="database.ini", section="postgresql") -> dict:
     config_path = os.path.join(PATH_PROJECT, "db", filename)
     parser = ConfigParser()
     parser.read(config_path)
