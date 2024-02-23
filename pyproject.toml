@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "employers-work"
+name = "search_company_vacancies"
 version = "0.1.0"
 description = ""
 authors = ["Kirill8769 <tkkrozn@gmail.com>"]
@@ -18,10 +18,10 @@ flake8 = "^7.0.0"
 isort = "^5.13.2"
 
 [tool.black]
-max-length = 119
+line-length = 119
 
 [tool.isort]
-max_length = 119
+line_length = 119
 
 [build-system]
 requires = ["poetry-core"]

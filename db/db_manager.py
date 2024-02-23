@@ -90,7 +90,7 @@ class DBManager:
                 INSERT INTO {name_table} ({file_column})
                 VALUES ({values_len[:-2]})
                 ON CONFLICT ({file_column.split(",")[0]}) DO NOTHING
-            """, insert_data)
+            """, insert_data,)
 
     def get_companies_and_vacancies_count(self, db_name: str) -> list | list[tuple]:
         """
@@ -156,7 +156,7 @@ class DBManager:
 
     def get_vacancies_with_keyword(self, db_name: str, search_words: str) -> list | list[tuple]:
         """
-        Метод получает список всех вакансий, в названии которых содержатся переданные в метод слова, например python.
+        Метод получает список всех вакансий по переданному тексту.
 
         :param db_name: Имя базы данных.
         :param search_words: Текст для поиска.

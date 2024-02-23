@@ -4,7 +4,13 @@ from db.db_manager import DBManager
 from utils.hh import HHParser
 
 
-def main():
+def main() -> None:
+    """
+    Главная функция программы.
+    Собирает информацию о компаниях и их вакансиях.
+    Записывает собранную информацию в базу данных.
+    Предоставляет пользователю интерактивное меню для удобного просмотра собранной информации.
+    """
     db = DBManager()
     db_name = "hh"
     db.create_database(db_name=db_name)
