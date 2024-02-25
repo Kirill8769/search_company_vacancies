@@ -51,12 +51,14 @@ class HHParser:
         else:
             employers_list = self.get_employers()
         for employer in employers_list:
-            filter_employers_list.append({
-                "employer_id": employer["id"],
-                "name": employer["name"],
-                "url": employer["alternate_url"],
-                "open_vacancies": employer["open_vacancies"],
-            })
+            filter_employers_list.append(
+                {
+                    "employer_id": employer["id"],
+                    "name": employer["name"],
+                    "url": employer["alternate_url"],
+                    "open_vacancies": employer["open_vacancies"],
+                }
+            )
         return filter_employers_list
 
     @staticmethod
@@ -122,7 +124,7 @@ class HHParser:
                     "currency": currency,
                     "status": vacancy["type"]["name"],
                     "published_date": published_date,
-                    "description": description
+                    "description": description,
                 }
             )
         return filter_vacancies_list

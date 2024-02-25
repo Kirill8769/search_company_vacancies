@@ -90,7 +90,7 @@ class DBManager:
                 INSERT INTO {name_table} ({file_column})
                 VALUES ({values_len[:-2]})
                 ON CONFLICT ({file_column.split(",")[0]}) DO NOTHING
-            """, insert_data)
+            """, insert_data,)
 
     def get_companies_and_vacancies_count(self, db_name: str) -> list | list[tuple]:
         """
@@ -99,7 +99,7 @@ class DBManager:
         :param db_name: Имя базы данных.
         :return: Список всех компаний и количество вакансий у каждой компании.
         """
-        query = "SELECT name, open_vacancies FROM employers ORDER BY 2 DESC"
+        query = "SELECT name, open_vacancies, url FROM employers ORDER BY 2 DESC"
         result_query = self.execute_query(db_name=db_name, query=query)
         return result_query
 
@@ -112,14 +112,10 @@ class DBManager:
         :return: Список всех вакансий с краткой информацией о них.
         """
         query = """
-                SELECT
-                    e.name,
-                    v.name,
-                    CONCAT(salary_from, ' ', '-', ' ', salary_to, ' ', currency) as salary,
-                    v.url
-                FROM employers e
-                    JOIN vacancies v USING(employer_id)
-                ORDER BY 1, 2
+            SELECT e.name, v.name, salary_from, salary_to, currency, v.url
+            FROM employers e
+                JOIN vacancies v USING(employer_id)
+            ORDER BY 1, 2
         """
         result_query = self.execute_query(db_name=db_name, query=query)
         return result_query
@@ -150,24 +146,28 @@ class DBManager:
         """
         avg_salary = self.get_avg_salary(db_name=db_name)
         query = f"""
-                SELECT * FROM vacancies
-                WHERE salary_from > {avg_salary}
-            """
+            SELECT e.name, v.name, salary_from, salary_to, currency, v.url
+            FROM vacancies v
+                JOIN employers e USING(employer_id)
+            WHERE salary_from > {avg_salary}
+        """
         result_query = self.execute_query(db_name=db_name, query=query)
         return result_query
 
     def get_vacancies_with_keyword(self, db_name: str, search_words: str) -> list | list[tuple]:
         """
-        Метод получает список всех вакансий, в названии которых содержатся переданные в метод слова, например python.
+        Метод получает список всех вакансий по переданному тексту.
 
         :param db_name: Имя базы данных.
         :param search_words: Текст для поиска.
         :return: Список найденных вакансий.
         """
         query = f"""
-                SELECT * FROM vacancies
-                WHERE name LIKE '%{search_words.lower()}%'
-                OR name LIKE '%{search_words.capitalize()}%'
-            """
+            SELECT e.name, v.name, salary_from, salary_to, currency, description, v.url
+            FROM vacancies v
+                JOIN employers e USING(employer_id)
+            WHERE v.name LIKE '%{search_words.lower()}%'
+                OR v.name LIKE '%{search_words.capitalize()}%'
+        """
         result_query = self.execute_query(db_name=db_name, query=query)
         return result_query
